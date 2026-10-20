@@ -12,7 +12,7 @@ export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}
     <form id="teacher-form" class="teacher-card teacher-editor" hidden><div class="teacher-toolbar"><h2 id="teacher-form-title">Kemas kini bacaan</h2><button id="teacher-cancel" type="button" class="button button-quiet">Tutup</button></div>
       <fieldset id="teacher-fields"><legend class="teacher-sr">Butiran murid</legend><p id="teacher-edit-name" class="teacher-edit-name"></p>
       <div class="teacher-field-row"><div><label for="teacher-status">Status bacaan</label><select id="teacher-status" required></select></div><div><label for="teacher-page">Muka surat</label><input id="teacher-page" type="number" inputmode="numeric" min="1" max="604" step="1" required><small id="teacher-page-hint"></small></div></div>
-      <details id="teacher-details"><summary>Nama, jantina dan avatar</summary><label for="teacher-name">Nama penuh</label><input id="teacher-name" maxlength="100" required autocomplete="off"><label for="teacher-gender">Jantina</label><select id="teacher-gender"><option>Lelaki</option><option>Perempuan</option></select><label for="teacher-outfit">Pakaian</label><select id="teacher-outfit"></select><label for="teacher-color">Warna</label><select id="teacher-color"></select></details>
+      <details id="teacher-details"><summary>Nama, jantina dan avatar</summary><label for="teacher-name">Nama penuh</label><input id="teacher-name" maxlength="100" required autocomplete="off"><label for="teacher-nickname">Nama panggilan</label><input id="teacher-nickname" placeholder="Contoh: Ahmad, Faris, Danish" maxlength="50" autocomplete="off"><label for="teacher-gender">Jantina</label><select id="teacher-gender"><option>Lelaki</option><option>Perempuan</option></select><label for="teacher-outfit">Pakaian</label><select id="teacher-outfit"></select><label for="teacher-color">Warna</label><select id="teacher-color"></select></details>
       <div class="teacher-actions"><button id="teacher-save" type="submit" class="button">Simpan bacaan</button><button id="teacher-delete" type="button" class="button teacher-danger">Padam murid</button></div>
       <div id="teacher-delete-confirm" class="teacher-confirm" hidden><p id="teacher-delete-question"></p><button id="teacher-delete-yes" type="button" class="button teacher-danger">Ya, padam murid</button><button id="teacher-delete-no" type="button" class="button button-quiet">Batal</button></div></fieldset>
       <button id="teacher-reconcile" type="button" class="button button-quiet" hidden>Semak rekod terkini sebelum cuba lagi</button><p id="teacher-current" class="teacher-current" role="status"></p>
@@ -83,6 +83,7 @@ export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}
     find('teacher-form-title').textContent = original ? 'Kemas kini bacaan' : 'Murid baharu';
     find('teacher-edit-name').textContent = student.name || 'Mulakan perjalanan seorang lagi pembaca.';
     find('teacher-name').value = student.name; find('teacher-gender').value = student.gender;
+    find('teacher-nickname').value = student.nickname || '';
     find('teacher-status').value = student.status; find('teacher-page').value = student.page; pageLimit();
     appearance(false); const draft = avatarDraft(student); find('teacher-outfit').value = draft.outfit; appearance(true); find('teacher-color').value = draft.color;
     find('teacher-details').open = !original; find('teacher-delete').hidden = !original;
@@ -118,9 +119,13 @@ export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}
   };
   find('teacher-form').onsubmit = async event => {
     event.preventDefault(); if (busy || uncertain) return;
-    const fields = { name: find('teacher-name').value.trim(), gender: find('teacher-gender').value, status: find('teacher-status').value, page: Number(find('teacher-page').value), outfit: find('teacher-outfit').value, color: find('teacher-color').value };
+    const nickname = find('teacher-nickname').value;
+    const fields = { name: find('teacher-name').value.trim(), nickname: nickname.trim() ? nickname : '', gender: find('teacher-gender').value, status: find('teacher-status').value, page: Number(find('teacher-page').value), outfit: find('teacher-outfit').value, color: find('teacher-color').value };
     if (!validReadingPage(fields.status, fields.page)) { say('Muka surat mesti nombor bulat positif dalam julat yang dibenarkan.'); find('teacher-page').focus(); return; }
-    const patch = original ? Object.fromEntries(Object.entries(fields).filter(([key, value]) => value !== original[key] && (!['outfit', 'color'].includes(key) || appearanceTouched))) : fields;
+    if ((!original || fields.nickname !== (original.nickname || '')) && (fields.nickname.length > 50 || /^[\s]*[=+@-]/.test(fields.nickname) || /[\x00-\x1f\x7f]/.test(fields.nickname))) {
+      say('Nama panggilan mesti teks biasa, maksimum 50 aksara.'); find('teacher-details').open = true; find('teacher-nickname').focus(); return;
+    }
+    const patch = original ? Object.fromEntries(Object.entries(fields).filter(([key, value]) => value !== (key === 'nickname' ? original.nickname || '' : original[key]) && (!['outfit', 'color'].includes(key) || appearanceTouched))) : fields;
     if (!Object.keys(patch).length) { say('Tiada perubahan untuk disimpan.'); return; }
     try { await perform(editId ? 'updateStudent' : 'addStudent', editId ? [editId, patch] : [requestId, fields]); close(); say('Rekod disahkan dan disimpan ke Google Sheets.'); } catch { /* Retain the form. */ }
   };

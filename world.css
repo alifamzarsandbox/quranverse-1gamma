@@ -1,0 +1,71 @@
+/* Scene-specific layout, scoped separately from the Phase 2 tab foundation. */
+.world-card { display: flex; flex-direction: column; }
+.world-viewport { position: relative; isolation: isolate; min-height: 480px; height: calc(100vh - 450px); max-height: 760px; flex: 1; overflow: hidden; background: radial-gradient(ellipse at 45% 44%, #f7fbeb 0%, #e5f2e8 65%, #deeee6 100%); }
+.world-canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.world-canvas:active { cursor: grabbing; }
+.world-canvas:focus-visible { outline-offset: -4px; }
+.world-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.world-student-label, .world-zone-label { position: absolute; left: 0; top: 0; width: max-content; will-change: transform; }
+.world-student-label { max-width: 110px; padding: 3px 6px; border-radius: 7px; background: #ffffffdc; border: 1px solid #fff; box-shadow: 0 2px 5px #173e3910; text-align: center; line-height: 1.2; color: #294b41; }
+.world-student-label strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 650; }
+.world-student-label small { display: block; font-size: 10px; color: #6c8274; margin-top: 2px; }
+.world-close-view .world-student-label, .world-student-label.is-selected { max-width: 150px; }
+.world-close-view .world-student-label strong, .world-student-label.is-selected strong { font-size: 12px; }
+.world-student-label.is-selected { border-color: #c3a33e; box-shadow: 0 0 0 2px #fff5cf; background: #fffae6; z-index: 2; }
+.world-zone-label { border-radius: 8px; border: 1px solid #ffffffb3; border-left: 4px solid var(--zone-color); background: #fffffff0; box-shadow: 0 2px 8px #26443512; padding: 3px 9px; color: var(--zone-dark); font-size: 12px; font-weight: 750; }
+.world-caption { position: absolute; left: 28px; top: 18px; pointer-events: none; z-index: 1; }
+.world-caption h2 { font-size: 25px; color: #51745f; letter-spacing: -.9px; margin-top: 5px; line-height: 1.15; }
+.world-caption .mini-eyebrow { font-size: 8px; }
+.world-close-view .world-caption { opacity: 0; }
+.world-camera-tools { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; padding: 4px; border-radius: 14px; gap: 2px; background: #fffffff2; border: 1px solid #dae6d7; box-shadow: 0 5px 15px #25493215; }
+.world-camera-tools button { width: 44px; height: 44px; min-height: 44px; border: 0; background: transparent; border-radius: 9px; font-size: 24px; display: grid; place-items: center; color: #456d57; }
+.world-camera-tools button:hover { background: #e9f2e2; }
+.camera-divider { width: 1px; height: 21px; background: #dce5d5; margin: 0 2px; }
+.world-gesture-hint { position: absolute; bottom: 6px; left: 0; right: 0; text-align: center; color: #718977; font-size: 9px; pointer-events: none; }
+.world-zone-picker { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; padding: 10px 14px 14px; background: #e5eee3; }
+.zone-chip { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 8px 3px; min-height: 44px; border: 1px solid #fff; background: #fff9; border-radius: 9px; font-size: 10px; color: var(--zone-dark); font-weight: 650; }
+.zone-chip::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--zone-color); }
+.zone-chip > small { font-size: 9px; opacity: .7; }
+.zone-chip:hover, .zone-chip[aria-pressed="true"] { background: var(--zone-pale); border-color: var(--zone-color); }
+.world-message { position: absolute; inset: 0; z-index: 5; background: #e9f3edee; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; padding: 40px; text-align: center; font-size: 14px; color: #577761; }
+.world-message .icon { width: 38px; height: 38px; }
+.world-student-card > label { margin: 0 0 8px; font-size: 12px; }
+.world-student-card > select { font-size: 12px; margin-bottom: 18px; }
+#world-selection > .muted { font-size: 12px; color: #748271; margin-top: 8px; }
+#world-selection h2 { font-size: 17px; }
+#focus-student { width: 100%; font-size: 12px; margin-top: 12px; }
+.selected-progress { margin-top: 16px; background: var(--zone-pale); border-radius: 13px; padding: 16px; display: flex; justify-content: space-between; align-items: center; color: var(--zone-dark); }
+.selected-progress strong { display: block; font-size: 29px; line-height: 1.1; }
+.selected-progress small { display: block; font-size: 10px; margin-top: 4px; }
+.selected-progress > span { font-size: 12px; font-weight: 650; }
+.world-student-card .zone-students { margin-top: 9px; }
+.world-student-card .zone-students li { padding: 5px 0; }
+.world-student-card .zone-students li.zone-more { padding: 0; }
+.world-student-card .zone-students li.selected-progress { padding: 16px; align-items: center; }
+.world-student-card .text-button { margin-top: 4px; }
+.is-presenting .world-viewport { height: calc(100vh - 450px); }
+@media (min-width: 1600px) {
+  .world-viewport { min-height: 515px; height: calc(100vh - 460px); }
+  .world-caption h2 { font-size: 28px; }.world-caption { top: 10px; left: 30px; }
+  .world-zone-picker { padding: 10px 18px 14px; }.zone-chip { font-size: 12px; }.zone-chip > small { font-size: 11px; }
+  .world-student-card > select { margin-bottom: 14px; }
+  .world-layout { align-items: stretch; }.world-student-card { padding-top: 17px; padding-bottom: 17px; }
+  .world-student-card .zone-students strong { font-size: 12px; }.world-student-card .zone-students small { font-size: 10px; }
+  .world-student-card .selected-progress strong { font-size: 29px; }
+  .is-presenting .world-viewport { min-height: 515px; height: calc(100vh - 460px); }
+}
+@media (max-width: 1199px) {
+  .world-zone-picker { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }.world-viewport { min-height: 500px; }
+  .world-caption h2 { font-size: 21px; }.world-caption { left: 20px; top: 18px; }
+}
+@media (max-width: 899px) {
+  .world-viewport, .is-presenting .world-viewport { flex: none; height: 540px; min-height: 0; }.world-zone-picker { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .zone-chip { font-size: 9px; gap: 4px; }.zone-chip small { display: none; }
+}
+@media (max-width: 599px) {
+  .world-viewport, .is-presenting .world-viewport { height: 490px; }.world-zone-picker { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .zone-chip { font-size: 10px; }.zone-chip small { display: inline; }.world-caption h2 { font-size: 19px; }.world-caption .mini-eyebrow { font-size: 6px; }.world-caption { left: 17px; top: 15px; }
+  .world-camera-tools { bottom: 27px; }.world-camera-tools button { width: 38px; min-width: 38px; }.world-gesture-hint { font-size: 8px; padding: 0 8px; }
+  .world-student-card > select { font-size: 14px; }.world-zone-label { font-size: 10px; padding: 3px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .world-student-label, .world-zone-label { will-change: auto; } }

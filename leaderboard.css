@@ -1,0 +1,57 @@
+/* Readable classroom rankings; small screens retain normal document scrolling. */
+body[data-view="kedudukan"] #panel-kedudukan { animation-name: ranking-enter; }
+@keyframes ranking-enter { from { opacity: 0; } to { opacity: 1; } }
+body[data-view="kedudukan"] main { padding-top: 20px; padding-bottom: 8px; }
+body[data-view="kedudukan"] .page-heading { margin-bottom: 18px; }
+body[data-view="kedudukan"] .page-heading .eyebrow { display: none; }
+body[data-view="kedudukan"] .page-heading h1 { font-size: 34px; }
+body[data-view="kedudukan"] .page-heading > div > p:last-child { font-size: 13px; margin-top: 5px; }
+.ranking-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
+.ranking-toolbar h2 { font-size: 20px; display: flex; align-items: center; gap: 14px; }
+.ranking-eyebrow { font-size: 9px; font-weight: 750; letter-spacing: 1.8px; color: #8a946e; margin-bottom: 7px; }
+.ranking-count { display: inline-block; padding: 4px 9px; border-radius: 8px; background: #e7eee0; font-size: 11px; color: #63815b; font-weight: 650; letter-spacing: 0; }
+.ranking-search { position: relative; width: 360px; flex-shrink: 0; }
+.ranking-search label { margin: 0; position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
+.ranking-search input { width: 100%; height: 44px; border: 1px solid #d9e2d2; background: #fffef9; border-radius: 12px; padding: 10px 14px; font-size: 14px; color: var(--ink); }
+.ranking-search-result { font-size: 10px; color: #72836e; margin-top: 5px; min-height: 15px; }
+.ranking-grid { display: grid; grid-template-columns: repeat(var(--ranking-columns, 3), minmax(0, 1fr)); gap: 8px 14px; }
+.ranking-grid.is-paginated { grid-template-rows: repeat(var(--ranking-rows, 10), minmax(70px, auto)); grid-auto-flow: column; }
+.rank-card { position: relative; min-width: 0; min-height: 70px; border: 1px solid #e0e7d9; border-radius: 14px; background: #fffef9; display: flex; align-items: center; gap: 10px; padding: 5px 12px 5px 9px; box-shadow: 0 3px 10px #33472a04; }
+.rank-card::before { content: ''; position: absolute; top: 16px; bottom: 16px; left: -1px; width: 3px; border-radius: 4px; background: var(--zone-color); }
+.rank-number { width: 35px; flex-shrink: 0; font-size: 18px; font-weight: 700; color: #9aa695; font-variant-numeric: tabular-nums; text-align: center; }
+.rank-avatar { height: 58px; width: 53px; display: grid; place-items: center; flex-shrink: 0; background: var(--zone-pale); color: var(--zone-dark); font-size: 16px; font-weight: 700; border-radius: 12px; }
+.rank-avatar img { height: 63px; width: 57px; object-fit: contain; display: block; margin-top: -4px; }
+.rank-detail { flex: 1; min-width: 0; }
+.rank-name { font-size: 18px; line-height: 1.12; font-weight: 650; letter-spacing: -.3px; overflow-wrap: anywhere; }
+.rank-status { display: inline-block; color: var(--zone-dark); background: var(--zone-pale); font-size: 10px; line-height: 1.5; font-weight: 650; border-radius: 5px; padding: 1px 6px; margin-top: 5px; }
+.rank-progress { flex-shrink: 0; text-align: right; min-width: 53px; }
+.rank-progress strong { font-size: 25px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; }
+.rank-progress small { display: block; font-size: 9px; color: #84907c; margin-top: 4px; }
+.rank-card.is-top-three { background: #fffcf0; border-color: #dfcd93; }
+.is-top-three .rank-number { color: #947018; background: #f6e7af; border-radius: 10px; padding: 9px 0; }
+.rank-card[data-rank="2"] { background: #f7faf9; border-color: #ccd8d3; }.rank-card[data-rank="2"] .rank-number { color: #658279; background: #e5edeb; }
+.rank-card[data-rank="3"] { background: #fcf7ef; border-color: #e1cbb3; }.rank-card[data-rank="3"] .rank-number { color: #a37c4c; background: #f0e1cc; }
+.rank-card.is-match { outline: 3px solid #3b876b; outline-offset: -2px; background: #e8f5e8; box-shadow: 0 0 0 3px #9fcdaf33; }
+.ranking-footer { display: flex; gap: 18px; align-items: center; min-height: 56px; font-size: 11px; color: #75846d; }
+.ranking-rule { margin-left: auto; font-size: 10px; }.ranking-pagination { display: flex; gap: 12px; align-items: center; }
+.ranking-pagination button { width: 44px; height: 44px; border-radius: 10px; border: 1px solid #d7dfcf; background: #fffef9; font-size: 20px; }
+.ranking-page { min-width: 120px; text-align: center; }
+@media (min-width: 1200px) {
+  .has-long-name { padding-top: 4px; padding-bottom: 4px; }
+  .has-long-name .rank-name { font-size: 18px; line-height: 1.1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .has-long-name .rank-status { margin-top: 3px; }
+  body[data-view="kedudukan"] .site-header { min-height: 80px; }
+  body[data-view="kedudukan"] main { padding-top: 16px; }
+  body[data-view="kedudukan"] .page-heading { margin-bottom: 12px; }
+  body[data-view="kedudukan"] .page-heading > div > p:last-child, body[data-view="kedudukan"] .site-footer { display: none; }
+  body[data-view="kedudukan"].is-presenting .page-heading { display: none; }
+  .ranking-toolbar { margin-bottom: 12px; }
+}
+@media (min-width: 1600px) { .rank-name { font-size: 22px; }.rank-card { gap: 12px; padding-right: 16px; }.rank-status { font-size: 11px; }.rank-progress strong { font-size: 28px; }.ranking-toolbar h2 { font-size: 22px; } }
+@media (max-width: 1199px) { .rank-name { font-size: 17px; }.rank-card { padding: 8px; }.ranking-toolbar { gap: 16px; }.ranking-toolbar h2 { font-size: 18px; }.ranking-search { width: 310px; } }
+@media (max-width: 699px) {
+  body[data-view="kedudukan"] .page-heading h1 { font-size: 29px; }
+  .ranking-toolbar { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 18px; }.ranking-toolbar h2 { justify-content: space-between; }.ranking-search { width: 100%; }
+  .ranking-eyebrow { font-size: 8px; }.rank-name { font-size: 17px; }.rank-card { gap: 7px; padding: 9px 10px 9px 5px; min-height: 86px; }.rank-number { width: 30px; font-size: 16px; }.rank-avatar { width: 43px; height: 55px; }.rank-avatar img { width: 49px; height: 58px; }.rank-status { font-size: 10px; }.rank-progress { min-width: 42px; }.rank-progress strong { font-size: 24px; }.rank-progress small { font-size: 8px; }
+  .ranking-footer { flex-wrap: wrap; gap: 8px; padding-top: 12px; }.ranking-rule { margin: 0; width: 100%; }.ranking-pagination { width: 100%; justify-content: center; }
+}

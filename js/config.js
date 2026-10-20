@@ -1,10 +1,11 @@
 const runtimeNode = typeof document !== 'undefined' ? document.getElementById('qv-runtime') : null;
 const runtime = runtimeNode ? JSON.parse(runtimeNode.textContent) : {};
 export const config = Object.freeze({
-  dataMode: 'demo',
+  dataMode: 'live',
   transport: 'fetch',
-  publicReadUrl: '',
-  teacherUrl: '',
+  publicReadUrl: 'https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbzMZ-oeqoqsYftZh_HnuMkGz5JUS42AzYERImeTBNJdt2ahLT87_PhraLPMuCrVCfI5Ig/exec',
+  teacherUrl: 'https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbzMZ-oeqoqsYftZh_HnuMkGz5JUS42AzYERImeTBNJdt2ahLT87_PhraLPMuCrVCfI5Ig/exec',
+  className: '1 Gamma',
   presentationIntervalMs: 30_000,
   inactivityMs: 30_000,
   ...runtime,

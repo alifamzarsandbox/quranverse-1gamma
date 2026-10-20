@@ -1,6 +1,6 @@
 import * as THREE from '../vendor/three/three.module.min.js';
 import { createAvatarFactory } from './avatar.js';
-import { createWorldLayout } from './world-layout.js';
+import { bridgeConnections, createWorldLayout } from './world-layout.js';
 import { statuses } from './config.js';
 
 export function createWorldModel() {
@@ -53,18 +53,20 @@ export function createWorldModel() {
     group.add(root);
     islands.set(status.name, { root, turf, rim, rock, decor });
   }
-  const paths = new THREE.InstancedMesh(geometry.step, material('#d1bf82'), 42);
+  const paths = new THREE.InstancedMesh(geometry.step, material('#d1bf82'), bridgeConnections.length * 6);
   paths.castShadow = false;
   group.add(paths);
   function updatePaths() {
-    const order = [7, 6, 5, 4, 0, 1, 2, 3];
+    const zonesByName = new Map(layout.zones.map(zone => [zone.name, zone]));
     const dummy = new THREE.Object3D();
     let index = 0;
-    for (let i = 0; i < order.length - 1; i++) {
-      const a = layout.zones[order[i]], b = layout.zones[order[i + 1]];
+    for (const [fromStage, toStage] of bridgeConnections) {
+      const a = zonesByName.get(fromStage), b = zonesByName.get(toStage);
       const direction = new THREE.Vector3(b.x - a.x, 0, b.z - a.z).normalize();
-      const from = new THREE.Vector3(a.x, -.45, a.z).addScaledVector(direction, a.radius + .3);
-      const to = new THREE.Vector3(b.x, -.45, b.z).addScaledVector(direction, -b.radius - .3);
+      // Adjacent stages align on X/Z; meet the actual ten-sided turf edge with a small overlap.
+      const edgeFactor = Math.abs(direction.x) > .5 ? Math.cos(Math.PI / 10) : 1;
+      const from = new THREE.Vector3(a.x, -.45, a.z).addScaledVector(direction, a.radius * edgeFactor - .1);
+      const to = new THREE.Vector3(b.x, -.45, b.z).addScaledVector(direction, -b.radius * edgeFactor + .1);
       for (let step = 0; step < 6; step++) {
         dummy.position.copy(from).lerp(to, step / 5);
         dummy.position.y -= Math.sin(step / 5 * Math.PI) * .5;

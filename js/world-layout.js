@@ -1,5 +1,11 @@
 import { statuses } from './config.js';
 
+export const bridgeConnections = Object.freeze([
+  ["Iqra' 1", "Iqra' 2"], ["Iqra' 2", "Iqra' 3"], ["Iqra' 3", "Iqra' 4"],
+  ["Iqra' 4", "Iqra' 5"], ["Iqra' 5", "Iqra' 6"], ["Iqra' 6", 'Al-Quran'],
+  ['Al-Quran', 'Khatam'],
+].map(pair => Object.freeze(pair)));
+
 export function createWorldLayout(students) {
   const seen = new Set();
   const groups = new Map(statuses.map(status => [status.name, []]));
@@ -15,17 +21,18 @@ export function createWorldLayout(students) {
     const radius = Math.max(4.7, Math.hypot((columns - 1) * 1.9, (rows - 1) * 2.1) + 2.3);
     return { ...status, index, members, columns, rows, radius, x: 0, z: 0, slots: [] };
   });
-  // Low levels in front; higher levels behind. Each column/row grows to its largest island.
-  const grid = [[3, 2, 1, 0], [7, 6, 5, 4]];
-  const widths = grid[0].map((_, column) => Math.max(...grid.map(row => zones[row[column]].radius)) * 2);
-  const depths = grid.map(row => Math.max(...row.map(index => zones[index].radius)) * 2);
+  // Return along the upper row so consecutive stages remain neighbors.
+  const grid = [['Khatam', 'Al-Quran', "Iqra' 6", "Iqra' 5"], ["Iqra' 1", "Iqra' 2", "Iqra' 3", "Iqra' 4"]];
+  const zonesByName = new Map(zones.map(zone => [zone.name, zone]));
+  const widths = grid[0].map((_, column) => Math.max(...grid.map(row => zonesByName.get(row[column]).radius)) * 2);
+  const depths = grid.map(row => Math.max(...row.map(name => zonesByName.get(name).radius)) * 2);
   const gap = 3.8;
   const width = widths.reduce((sum, value) => sum + value, 0) + gap * 3;
   const depth = depths[0] + depths[1] + gap;
   let left = -width / 2;
   for (let column = 0; column < 4; column++) {
     for (let row = 0; row < 2; row++) {
-      const zone = zones[grid[row][column]];
+      const zone = zonesByName.get(grid[row][column]);
       zone.x = left + widths[column] / 2;
       zone.z = row === 0 ? -depth / 2 + depths[0] / 2 : depth / 2 - depths[1] / 2;
       zone.slots = zone.members.map((student, index) => {

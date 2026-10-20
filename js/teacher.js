@@ -1,4 +1,4 @@
-import { statuses, outfits, avatarColors } from './config.js';
+import { statuses, outfits, avatarColors, maxReadingPage, readingPageMaximum, validReadingPage } from './config.js';
 import { avatarDraft, outfitFor } from './avatar-preferences.js';
 
 export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}, entryUrl }) {
@@ -41,9 +41,9 @@ export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}
   function option(value, label = value) { const node = document.createElement('option'); node.value = value; node.textContent = label; return node; }
   find('teacher-status').replaceChildren(...statuses.map(status => option(status.name)));
   function pageLimit() {
-    const maximum = ['Al-Quran', 'Khatam'].includes(find('teacher-status').value) ? 604 : 31;
+    const maximum = readingPageMaximum(find('teacher-status').value);
     find('teacher-page').max = maximum;
-    find('teacher-page-hint').textContent = `1–${maximum}; had tepat disemak oleh pelayan.`;
+    find('teacher-page-hint').textContent = maximum === maxReadingPage ? 'Nombor bulat positif; ikut muka surat edisi buku.' : `1–${maximum}; had tepat disemak oleh pelayan.`;
   }
   function appearance(preserve = true) {
     const gender = find('teacher-gender').value, currentOutfit = find('teacher-outfit').value, currentColor = find('teacher-color').value;
@@ -119,6 +119,7 @@ export function createTeacher({ root, client, mutate, refresh, onAuth = () => {}
   find('teacher-form').onsubmit = async event => {
     event.preventDefault(); if (busy || uncertain) return;
     const fields = { name: find('teacher-name').value.trim(), gender: find('teacher-gender').value, status: find('teacher-status').value, page: Number(find('teacher-page').value), outfit: find('teacher-outfit').value, color: find('teacher-color').value };
+    if (!validReadingPage(fields.status, fields.page)) { say('Muka surat mesti nombor bulat positif dalam julat yang dibenarkan.'); find('teacher-page').focus(); return; }
     const patch = original ? Object.fromEntries(Object.entries(fields).filter(([key, value]) => value !== original[key] && (!['outfit', 'color'].includes(key) || appearanceTouched))) : fields;
     if (!Object.keys(patch).length) { say('Tiada perubahan untuk disimpan.'); return; }
     try { await perform(editId ? 'updateStudent' : 'addStudent', editId ? [editId, patch] : [requestId, fields]); close(); say('Rekod disahkan dan disimpan ke Google Sheets.'); } catch { /* Retain the form. */ }

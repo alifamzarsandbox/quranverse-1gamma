@@ -4,7 +4,7 @@ const priorities = new Map(statuses.map((status, index) => [status.name, index])
 export function rankStudents(students) {
   const ids = new Set();
   for (const student of students) {
-    if (!student.id || ids.has(student.id) || !priorities.has(student.status) || !Number.isInteger(student.page) || student.page < 1) throw new Error('Rekod kedudukan tidak sah.');
+    if (!student.id || ids.has(student.id) || !priorities.has(student.status) || !Number.isSafeInteger(student.page) || student.page < 1) throw new Error('Rekod kedudukan tidak sah.');
     ids.add(student.id);
   }
   return [...students].sort((a, b) => priorities.get(a.status) - priorities.get(b.status) || b.page - a.page || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));

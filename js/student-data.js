@@ -1,4 +1,8 @@
-import { statuses } from './config.js';
+import { statuses, validReadingPage } from './config.js';
+
+export function normalizeNickname(value) {
+  return typeof value === 'string' && value.trim() && !/[\x00-\x1f\x7f]/.test(value) ? value : '';
+}
 
 export function normalizeStudents(input) {
   if (!Array.isArray(input)) throw new Error('Data murid tidak sah.');
@@ -6,10 +10,10 @@ export function normalizeStudents(input) {
   return input.map(student => {
     if (!student || typeof student.id !== 'string' || !/^[A-Za-z0-9_-]{1,80}$/.test(student.id) || ids.has(student.id) ||
         typeof student.name !== 'string' || !student.name.trim() || student.name.length > 100 || !['Lelaki', 'Perempuan'].includes(student.gender) ||
-        !statuses.some(status => status.name === student.status) || !Number.isSafeInteger(student.page) || student.page < 1 || student.page > 9999 ||
+        !statuses.some(status => status.name === student.status) || !validReadingPage(student.status, student.page) ||
         !Number.isSafeInteger(student.bil) || student.bil < 1 || typeof student.outfit !== 'string' || typeof student.color !== 'string') throw new Error('Data murid tidak sah. Semak ID dan medan wajib dalam helaian.');
     ids.add(student.id);
-    return Object.freeze(Object.fromEntries(['id', 'bil', 'name', 'gender', 'status', 'page', 'outfit', 'color'].map(key => [key, student[key]])));
+    return Object.freeze({ ...Object.fromEntries(['id', 'bil', 'name', 'gender', 'status', 'page', 'outfit', 'color'].map(key => [key, student[key]])), nickname: normalizeNickname(student.nickname) });
   });
 }
 export function studentSignature(students) {

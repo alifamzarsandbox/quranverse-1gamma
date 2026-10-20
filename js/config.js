@@ -6,10 +6,23 @@ export const config = Object.freeze({
   publicReadUrl: 'https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbzMZ-oeqoqsYftZh_HnuMkGz5JUS42AzYERImeTBNJdt2ahLT87_PhraLPMuCrVCfI5Ig/exec',
   teacherUrl: 'https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbzMZ-oeqoqsYftZh_HnuMkGz5JUS42AzYERImeTBNJdt2ahLT87_PhraLPMuCrVCfI5Ig/exec',
   className: '1 Gamma',
+  pageLimits: {},
   presentationIntervalMs: 30_000,
   inactivityMs: 30_000,
   ...runtime,
 });
+
+// Keep page values within 15 decimal digits for exact spreadsheet storage.
+export const maxReadingPage = 999_999_999_999_999;
+export function readingPageMaximum(status, limits = config.pageLimits) {
+  if (['Al-Quran', 'Khatam'].includes(status)) return 604;
+  const maximum = Object.prototype.hasOwnProperty.call(limits || {}, status) ? limits[status] : maxReadingPage;
+  if (!Number.isSafeInteger(maximum) || maximum < 1 || maximum > maxReadingPage) throw new Error('Tetapan had muka surat tidak sah.');
+  return maximum;
+}
+export function validReadingPage(status, page, limits) {
+  return Number.isSafeInteger(page) && page >= 1 && page <= readingPageMaximum(status, limits);
+}
 
 export const avatarColors = Object.freeze({
   hijau: Object.freeze({ label: 'Hijau zamrud', hex: '#369c88' }),

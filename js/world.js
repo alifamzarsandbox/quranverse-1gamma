@@ -141,7 +141,7 @@ export function createWorld({ container, onSelect = () => {}, onZone = () => {},
       const selected = id === selectedId;
       const name = avatar.student.name;
       const shortName = name.split(/\s+/).find(word => !['Muhammad', 'Mohd', 'Nur', 'Ahmad', 'Siti', 'Abdul'].includes(word)) || name;
-      const shownName = close || selected ? name : shortName;
+      const shownName = avatar.student.nickname || (close || selected ? name : shortName);
       if (label.firstElementChild.textContent !== shownName) label.firstElementChild.textContent = shownName;
       const labelWidth = close || selected ? 150 : Math.min(110, shownName.length * 7 + 14);
       const box = { left: p.x - labelWidth / 2, right: p.x + labelWidth / 2, top: p.y - 38, bottom: p.y };
@@ -276,9 +276,9 @@ export function createWorld({ container, onSelect = () => {}, onZone = () => {},
           const progress = document.createElement('small');
           label.append(name, progress); labels.set(id, label);
         }
-        label.firstElementChild.textContent = avatar.student.name;
+        label.firstElementChild.textContent = avatar.student.nickname || avatar.student.name;
         label.lastElementChild.textContent = `ms. ${avatar.student.page}`;
-        label.title = `${avatar.student.name} · ${avatar.student.status} · Muka surat ${avatar.student.page}`;
+        label.title = `${avatar.student.nickname ? `${avatar.student.nickname} · ` : ''}${avatar.student.name} · ${avatar.student.status} · Muka surat ${avatar.student.page}`;
       }
       for (const zone of model.layout.zones) {
         if (!zoneLabels.has(zone.name)) zoneLabels.set(zone.name, makeLabel('world-zone-label', ''));
